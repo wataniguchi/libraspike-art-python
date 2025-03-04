@@ -114,6 +114,12 @@ typedef struct _pbio_servo_t pbio_servo_t;
 /* spike/hub/system.h */
 void hub_system_shutdown(void);
 
+/* spike/hub/imu.h */
+pbio_error_t hub_imu_init(void);
+void hub_imu_get_acceleration(float accel[3]);
+void hub_imu_get_angular_velocity(float angv[3]);
+float hub_imu_get_temperature(void);
+
 /* spike/hub/display.h */
 pbio_error_t hub_display_orientation(uint8_t up);
 pbio_error_t hub_display_off(void);
@@ -155,6 +161,13 @@ typedef struct _pup_device_t pup_device_t;
 pup_device_t *pup_ultrasonic_sensor_get_device(pbio_port_id_t port);
 int32_t pup_ultrasonic_sensor_distance(pup_device_t *pdev);
 bool pup_ultrasonic_sensor_presence(pup_device_t *pdev);
+
+/* spike/pup/forcesensor.h */
+pup_device_t *pup_force_sensor_get_device(pbio_port_id_t port);
+float pup_force_sensor_force(pup_device_t *pdev);
+float pup_force_sensor_distance(pup_device_t *pdev);
+bool pup_force_sensor_pressed(pup_device_t *pdev, float force);
+bool pup_force_sensor_touched(pup_device_t *pdev);
 
 /* spike/pup/colorsensor.h */
 pup_device_t *pup_color_sensor_get_device(pbio_port_id_t port);

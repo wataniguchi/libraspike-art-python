@@ -110,6 +110,19 @@ def raspike_prot_shutdown() -> int:
 def hub_system_shutdown() -> None:
     lib.hub_system_shutdown()
 
+def hub_imu_init() -> pbio_error:
+    return lib.hub_imu_init()
+def hub_imu_get_acceleration() -> Tuple[float, float, float]:
+    accel = ffi.new("float[3]")
+    lib.hub_imu_get_acceleration(accel)
+    return accel[0], accel[1], accel[2]
+def hub_imu_get_angular_velocity() -> Tuple[float, float, float]:
+    angv = ffi.new("float[3]")
+    lib.hub_imu_get_angular_velocity(angv)
+    return angv[0], angv[1], angv[2] 
+def hub_imu_get_temperature() -> float:
+    return lib.hub_imu_get_temperature()
+
 def hub_display_orientation(up) -> pbio_error:
     return lib.hub_display_orientation(up)
 def hub_display_off() -> pbio_error:
@@ -164,6 +177,19 @@ def pup_ultrasonic_sensor_distance(pdev: ffi.CData) -> int:
     return lib.pup_ultrasonic_sensor_distance(pdev)
 def pup_ultrasonic_sensor_presence(pdev: ffi.CData) -> bool:
     return lib.pup_ultrasonic_sensor_presence(pdev)
+
+def pup_force_sensor_get_device(port: pbio_port) -> ffi.CData:
+    pdev = lib.pup_force_sensor_get_device(port)
+    return pdev if pdev != ffi.NULL else None
+def pup_force_sensor_force(pdev: ffi.CData) -> float:
+    return lib.pup_force_sensor_force(pdev)
+def pup_force_sensor_distance(pdev: ffi.CData) -> float:
+    return lib.pup_force_sensor_distance(pdev)
+def pup_force_sensor_pressed(pdev: ffi.CData, force: float) -> bool:
+    return lib.pup_force_sensor_pressed(pdev, force)
+def pup_force_sensor_touched(pdev: ffi.CData) -> bool:
+    return lib.pup_force_sensor_touched(pdev)
+
 
 def pup_color_sensor_get_device(port: pbio_port) -> ffi.CData:
     pdev = lib.pup_color_sensor_get_device(port)
