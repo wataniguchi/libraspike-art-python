@@ -16,4 +16,4 @@ or:
 
 Build the bindings and install libraspike-art-python package:
 
-    pip install git+https://github.com/wataniguchi/libraspike-art-python.git
+    pip install libraspike-art-python
