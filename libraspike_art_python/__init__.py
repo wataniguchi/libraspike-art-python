@@ -122,12 +122,42 @@ def hub_imu_get_angular_velocity() -> Tuple[float, float, float]:
     return angv[0], angv[1], angv[2] 
 def hub_imu_get_temperature() -> float:
     return lib.hub_imu_get_temperature()
+def hub_imu_get_orientation() -> Tuple[
+    Tuple[float, float, float],
+    Tuple[float, float, float],
+    Tuple[float, float, float]
+    ]:
+    rotation_matrix = ffi.new("float[9]")
+    lib.hub_imu_get_orientation(rotation_matrix)
+    return (
+        [rotation_matrix[0], rotation_matrix[1], rotation_matrix[2]],
+        [rotation_matrix[3], rotation_matrix[4], rotation_matrix[5]],
+        [rotation_matrix[6], rotation_matrix[7], rotation_matrix[8]]
+    )
+def hub_imu_get_heading() -> float:
+    return lib.hub_imu_get_heading()
+def hub_imu_initialize_by_default() -> pbio_error:
+    return lib.hub_imu_initialize_by_default()
+def hub_imu_initialize(
+        gyro_stationary_threshold: float,
+        accel_stationary_threshold: float,
+        angular_velocity_bias: Tuple[float, float, float],
+        angular_velocity_scale: Tuple[float, float, float],
+        acceleration_correction: Tuple[float, float, float, float, float, float]
+) -> pbio_error:
+    angv_bias = ffi.new("float[3]", angular_velocity_bias)
+    angv_scale = ffi.new("float[3]", angular_velocity_scale)
+    accel_corr = ffi.new("float[6]", acceleration_correction)
+    return lib.hub_imu_initialize(
+        gyro_stationary_threshold, accel_stationary_threshold,
+        angv_bias, angv_scale, accel_corr
+    )
 
-def hub_display_orientation(up) -> pbio_error:
+def hub_display_orientation(up: int) -> pbio_error:
     return lib.hub_display_orientation(up)
 def hub_display_off() -> pbio_error:
     return lib.hub_display_off()
-def hub_display_pixel(row, column, brightness) -> pbio_error:
+def hub_display_pixel(row: int, column: int, brightness: int) -> pbio_error:
     return lib.hub_display_pixel(row, column, brightness)
 #ToDo: pbio_error_t hub_display_image(uint8_t* image);
 def hub_display_number(num: int) -> pbio_error:

@@ -5,7 +5,7 @@ from os import path
 LIB_SOURCE = './libraspike-art/'
 
 def clone_git():
-    return subprocess.run(['git', 'clone', 'https://github.com/ETrobocon/libraspike-art.git'], text=True,
+    return subprocess.run(['git', 'clone', 'https://github.com/wataniguchi/libraspike-art.git'], text=True,
                           stdout=subprocess.PIPE).stdout.strip()
 
 def make_lib():
@@ -24,6 +24,7 @@ ffibuilder.set_source("_libraspike_art",
     """
 #include "raspike_com.h"
 #include "raspike_protocol_api.h"
+#include "raspike_additional_api.h"
 #include "spike/pup/motor.h"
 #include "spike/pup/colorsensor.h"
 #include "spike/pup/forcesensor.h"
@@ -119,6 +120,13 @@ pbio_error_t hub_imu_init(void);
 void hub_imu_get_acceleration(float accel[3]);
 void hub_imu_get_angular_velocity(float angv[3]);
 float hub_imu_get_temperature(void);
+
+/* raspike_additional_api.h */
+void hub_imu_get_orientation(float rotation_matrix[3*3]);
+float hub_imu_get_heading(void);
+pbio_error_t hub_imu_initialize_by_default(void);
+pbio_error_t hub_imu_initialize(float gyro_stationary_threshold, float accel_stationary_threshold,
+    float angular_velocity_bias[3], float angular_velocity_scale[3], float acceleration_correction[6]);
 
 /* spike/hub/display.h */
 pbio_error_t hub_display_orientation(uint8_t up);
