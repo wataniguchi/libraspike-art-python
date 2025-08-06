@@ -139,12 +139,19 @@ def hub_imu_get_heading() -> float:
 def hub_imu_initialize_by_default() -> pbio_error:
     return lib.hub_imu_initialize_by_default()
 def hub_imu_initialize(
-        gyro_stationary_threshold: float,
-        accel_stationary_threshold: float,
-        angular_velocity_bias: Tuple[float, float, float],
-        angular_velocity_scale: Tuple[float, float, float],
-        acceleration_correction: Tuple[float, float, float, float, float, float]
-) -> pbio_error:
+        config: Tuple[
+            float, float,                   # gyro_stationary_threshold, accel_stationary_threshold
+            Tuple[float, float, float],     # angular_velocity_bias
+            Tuple[float, float, float],     # angular_velocity_scale
+            Tuple[float, float, float, float, float, float]  # acceleration_correction
+        ]) -> pbio_error:
+    (
+        gyro_stationary_threshold,
+        accel_stationary_threshold,
+        angular_velocity_bias,
+        angular_velocity_scale,
+        acceleration_correction
+    ) = config    
     angv_bias = ffi.new("float[3]", angular_velocity_bias)
     angv_scale = ffi.new("float[3]", angular_velocity_scale)
     accel_corr = ffi.new("float[6]", acceleration_correction)

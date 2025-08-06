@@ -120,9 +120,9 @@ def button_test():
 
 def imu_test():
     if lib.hub_imu_initialize(
-        2.0, 2500.0,
+        [2.0, 2500.0,
         [-1.61239, -1.485107, -0.2945677], [360.4545, 356.9208, 363.781],
-        [10016.18, -9657.935, 9823.967, -9957.187, 9766.231, -9970.058]
+        [10016.18, -9657.935, 9823.967, -9957.187, 9766.231, -9970.058]]
     ) == pbio_error.SUCCESS:
     #if lib.hub_imu_initialize_by_default() == pbio_error.SUCCESS:
         time.sleep(1) # wait until IMU stablizes
@@ -193,9 +193,9 @@ def turn_to_heading(right, left, target_heading):
 
 def imu_run_test():
     if lib.hub_imu_initialize(
-        2.0, 2500.0,
+        [2.0, 2500.0,
         [-1.61239, -1.485107, -0.2945677], [360.4545, 356.9208, 363.781],
-        [10016.18, -9657.935, 9823.967, -9957.187, 9766.231, -9970.058]
+        [10016.18, -9657.935, 9823.967, -9957.187, 9766.231, -9970.058]]
     ) == pbio_error.SUCCESS:
     #if lib.hub_imu_initialize_by_default() == pbio_error.SUCCESS:
         right = lib.pup_motor_get_device(pbio_port.ID_A)
@@ -236,5 +236,5 @@ if __name__ == "__main__":
     #colorsensor_test()
     #battery_test()
     #button_test()
-    #imu_test()
-    imu_run_test()
+    imu_test()
+    #imu_run_test()
