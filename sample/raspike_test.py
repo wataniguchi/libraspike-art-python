@@ -119,22 +119,34 @@ def button_test():
     lib.hub_speaker_stop()
 
 def imu_test():
-    if lib.hub_imu_initialize(
-        [2.0, 2500.0,
-        [-1.61239, -1.485107, -0.2945677], [360.4545, 356.9208, 363.781],
-        [10016.18, -9657.935, 9823.967, -9957.187, 9766.231, -9970.058]]
-    ) == pbio_error.SUCCESS:
-    #if lib.hub_imu_initialize_by_default() == pbio_error.SUCCESS:
-        time.sleep(1) # wait until IMU stablizes
-        for i in range(60):
-            accel = lib.hub_imu_get_acceleration()
-            angv = lib.hub_imu_get_angular_velocity()
-            print(f'[accel(mm/s²)] x={accel[0]} y={accel[1]} z={accel[2]} [angv(deg/s)] x={angv[0]} y={angv[1]} z={angv[2]}')
-            rot = lib.hub_imu_get_orientation()
-            print(f'[rot mat(deg)] m11={rot[0][0]} m12={rot[0][1]} m13={rot[0][2]} m21={rot[1][0]} m22={rot[1][1]} m23={rot[1][2]} m31={rot[2][0]} m32={rot[2][1]} m33={rot[2][2]}')
-            heading = lib.hub_imu_get_heading()
-            print(f'[heading] {heading}')
-            time.sleep(1)
+    lib.hub_imu_init()
+    # HackSPi's hub is tilted at ~51 degrees.
+    lib.hub_imu_set_tilt(51.0)
+    # Wait for IMU to become ready
+    while not lib.hub_imu_is_ready():
+        print(".", end="")
+        time.sleep(0.1)
+    print("IMU is ready.")
+    for i in range(10): # 10 seconds
+        accel = lib.hub_imu_get_acceleration()
+        angv = lib.hub_imu_get_angular_velocity()
+        print(f'[accel(mm/s²)] x={accel[0]} y={accel[1]} z={accel[2]} [angv(deg/s)] x={angv[0]} y={angv[1]} z={angv[2]}')
+        heading = lib.hub_imu_get_heading()
+        print(f'[heading] {heading}')
+        time.sleep(1)
+    # Test reset heading
+    print('Resetting heading to 0 in 3 seconds...')
+    time.sleep(3)
+    lib.hub_imu_reset_heading()
+    time.sleep(1)
+    for i in range(10): # 10 seconds
+        accel = lib.hub_imu_get_acceleration()
+        angv = lib.hub_imu_get_angular_velocity()
+        print(f'[accel(mm/s²)] x={accel[0]} y={accel[1]} z={accel[2]} [angv(deg/s)] x={angv[0]} y={angv[1]} z={angv[2]}')
+        heading = lib.hub_imu_get_heading()
+        print(f'[heading] {heading}')
+        time.sleep(1)
+    print('Done.')
 
 LOOP_DELAY = 0.02 # 20 ms loop
 SQUARE_SIDES = 8
@@ -192,30 +204,34 @@ def turn_to_heading(right, left, target_heading):
         time.sleep(LOOP_DELAY)
 
 def imu_run_test():
-    if lib.hub_imu_initialize(
-        [2.0, 2500.0,
-        [-1.61239, -1.485107, -0.2945677], [360.4545, 356.9208, 363.781],
-        [10016.18, -9657.935, 9823.967, -9957.187, 9766.231, -9970.058]]
-    ) == pbio_error.SUCCESS:
-    #if lib.hub_imu_initialize_by_default() == pbio_error.SUCCESS:
-        right = lib.pup_motor_get_device(pbio_port.ID_A)
-        left  = lib.pup_motor_get_device(pbio_port.ID_B)
-        err = lib.pup_motor_setup(right,pup_direction.CLOCKWISE,True)
-        err = lib.pup_motor_setup(left,pup_direction.COUNTERCLOCKWISE,True)
-        time.sleep(1) # wait until IMU stablizes
-        heading = lib.hub_imu_get_heading()
-        print(f'[heading] initial     = {heading}')
+    lib.hub_imu_init()
+    # HackSPi's hub is tilted at ~51 degrees.
+    lib.hub_imu_set_tilt(51.0)
+    # Wait for IMU to become ready
+    while not lib.hub_imu_is_ready():
+        print(".", end="")
+        time.sleep(0.1)
+    print("IMU is ready.")
 
-        for i in range(SQUARE_SIDES):
-            drive_straight(right, left, 3.0, heading) # 3 seconds straight
-            heading = lib.hub_imu_get_heading()
-            print(f'[heading] before turn = {heading}')
-            heading += 90
-            turn_to_heading(right, left, heading)
-            heading_now = lib.hub_imu_get_heading()
-            print(f'[heading] after  turn = {heading_now}')
-        lib.pup_motor_stop(right)
-        lib.pup_motor_stop(left)
+    right = lib.pup_motor_get_device(pbio_port.ID_A)
+    left  = lib.pup_motor_get_device(pbio_port.ID_B)
+    err = lib.pup_motor_setup(right,pup_direction.CLOCKWISE,True)
+    err = lib.pup_motor_setup(left,pup_direction.COUNTERCLOCKWISE,True)
+    #time.sleep(1) # wait until IMU stablizes
+    heading = lib.hub_imu_get_heading()
+    print(f'[heading] initial     = {heading}')
+
+    for i in range(SQUARE_SIDES):
+        drive_straight(right, left, 3.0, heading) # 3 seconds straight
+        heading = lib.hub_imu_get_heading()
+        print(f'[heading] before turn = {heading}')
+        heading += 90
+        turn_to_heading(right, left, heading)
+        heading_now = lib.hub_imu_get_heading()
+        print(f'[heading] after  turn = {heading_now}')
+    lib.pup_motor_stop(right)
+    lib.pup_motor_stop(left)
+    print('Done.')
 
 if __name__ == "__main__":
     desc = lib.raspike_open_usb_communication(RASPIKE_COM_NAME)
