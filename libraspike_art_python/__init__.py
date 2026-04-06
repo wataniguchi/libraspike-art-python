@@ -112,6 +112,12 @@ def hub_system_shutdown() -> None:
 
 def hub_imu_init() -> pbio_error:
     return lib.hub_imu_init()
+def hub_imu_is_ready() -> bool:
+    return lib.hub_imu_is_ready()
+def hub_imu_is_stationary() -> bool:
+    return lib.hub_imu_is_stationary()
+def hub_imu_set_tilt(angle: float) -> None:
+    lib.hub_imu_set_tilt(angle)
 def hub_imu_get_acceleration() -> Tuple[float, float, float]:
     accel = ffi.new("float[3]")
     lib.hub_imu_get_acceleration(accel)
@@ -122,43 +128,10 @@ def hub_imu_get_angular_velocity() -> Tuple[float, float, float]:
     return angv[0], angv[1], angv[2] 
 def hub_imu_get_temperature() -> float:
     return lib.hub_imu_get_temperature()
-def hub_imu_get_orientation() -> Tuple[
-    Tuple[float, float, float],
-    Tuple[float, float, float],
-    Tuple[float, float, float]
-    ]:
-    rotation_matrix = ffi.new("float[9]")
-    lib.hub_imu_get_orientation(rotation_matrix)
-    return (
-        [rotation_matrix[0], rotation_matrix[1], rotation_matrix[2]],
-        [rotation_matrix[3], rotation_matrix[4], rotation_matrix[5]],
-        [rotation_matrix[6], rotation_matrix[7], rotation_matrix[8]]
-    )
 def hub_imu_get_heading() -> float:
     return lib.hub_imu_get_heading()
-def hub_imu_initialize_by_default() -> pbio_error:
-    return lib.hub_imu_initialize_by_default()
-def hub_imu_initialize(
-        config: Tuple[
-            float, float,                   # gyro_stationary_threshold, accel_stationary_threshold
-            Tuple[float, float, float],     # angular_velocity_bias
-            Tuple[float, float, float],     # angular_velocity_scale
-            Tuple[float, float, float, float, float, float]  # acceleration_correction
-        ]) -> pbio_error:
-    (
-        gyro_stationary_threshold,
-        accel_stationary_threshold,
-        angular_velocity_bias,
-        angular_velocity_scale,
-        acceleration_correction
-    ) = config    
-    angv_bias = ffi.new("float[3]", angular_velocity_bias)
-    angv_scale = ffi.new("float[3]", angular_velocity_scale)
-    accel_corr = ffi.new("float[6]", acceleration_correction)
-    return lib.hub_imu_initialize(
-        gyro_stationary_threshold, accel_stationary_threshold,
-        angv_bias, angv_scale, accel_corr
-    )
+def hub_imu_reset_heading() -> None:
+    lib.hub_imu_reset_heading()
 
 def hub_display_orientation(up: int) -> pbio_error:
     return lib.hub_display_orientation(up)
